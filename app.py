@@ -1,39 +1,40 @@
 import streamlit as st
 
-st.set_page_config(page_title="Tienda Palmira", page_icon="👕")
+st.set_page_config(page_title="OLYMPOS - Lina Store", page_icon="👗", layout="centered")
 
-st.title("👕 TIENDA DE ROPA - PALMIRA VALLE 👖")
-st.subheader("Sistema de Ventas v1.0 - Hecho por Erick")
+if "stock_body" not in st.session_state:
+    st.session_state.stock_body = {"Negro": 5, "Blanco": 4, "Vino": 3, "Azul Noche": 3, "Cafe": 3, "Amarillo": 2}
+if "stock_enterizo" not in st.session_state:
+    st.session_state.stock_enterizo = {"Negro": 10}
+
+st.title("👗 OLYMPOS - LINA STORE")
+st.caption("Inventario en tiempo real | Palmira - 100% desde el celular")
 st.divider()
 
-nombre = st.text_input("👤 Como te llamas")
+st.subheader("BODY AMARA Ref 3203 - $38.000")
+st.write(f"Stock total: {sum(st.session_state.stock_body.values())} unidades | Talla Única")
+col1, col2 = st.columns(2)
+with col1:
+    color_body = st.selectbox("Elige color:", list(st.session_state.stock_body.keys()), key="body_color")
+with col2:
+    st.metric("Disponibles", st.session_state.stock_body[color_body])
 
-if nombre:
-    st.success(f"¡Hola {nombre}! Bienvenido a la mejor tienda de Palmira 😎 ")
+if st.button("🛒 VENDER 1 Body Amara", use_container_width=True):
+    if st.session_state.stock_body[color_body] > 0:
+        st.session_state.stock_body[color_body] -= 1
+        st.success(f"¡Venta registrada! Body Amara {color_body} vendido. Quedan {st.session_state.stock_body[color_body]}")
+        st.balloons()
+    else:
+        st.error("¡Sin stock de ese color!")
 
-    st.write("### 🔥 PROMOCIONES DE HOY:")
-    st.write("_ 👕 Camisas a $30.000")
-    st.write("- 👖 Pantalones a $65.000")
-    st.write("- 🎁 ¡Lleva 2 pantalones y te regalamos 1 camisa!")
+st.divider()
+st.subheader("Enterizo 070061 - $150.000")
+if st.button("🛒 VENDER 1 Enterizo", type="primary", use_container_width=True):
+    if st.session_state.stock_enterizo["Negro"] > 0:
+        st.session_state.stock_enterizo["Negro"] -= 1
+        st.success(f"¡Venta! Quedan {st.session_state.stock_enterizo['Negro']}")
+    else:
+        st.error("Sin stock")
 
-    camisas = st.number_input("👕 cuantas camisas quieres ?", min_value=0 , step=1)
-    pantalones = st.number_input("👖Cuantos pantalones quieres?", min_value=0, step=1)
-
-    if st.button("💰 CALCULAR TOTAL"):
-        precio_camisa = 30000
-        precio_pantalon = 65000
-        total = (camisas * precio_camisa) + (pantalones * precio_pantalon)
-
-        st.divider()
-        st.write(f"### 🧾 FACTURA PARA: {nombre.upper()}")
-        st.write(f"👕 {camisas} camisas x ${precio_camisa} = ${camisas * precio_camisa}")
-        st.write(f"👖 {pantalones} pantalones x ${precio_pantalon} = ${pantalones * precio_pantalon}")
-        st.write(f"## 💰 TOTAL A PAGAR: ${total} pesos")
-
-        if pantalones >= 2:
-            st.balloons()
-            st.success(f"🎉 ¡FELICIDADES {nombre}! Te lleva 1 CAMISA GRATIS 🎉")
-            st.snow()
-        else:
-            faltan = 2 - pantalones
-            st.warning(f" 💡 Te faltan {faltan} pantalon(es) para ganar una camisa gratis")
+st.divider()
+st.info("💡 Esto es lo que Génesis NO hace desde el celular: control por color en tiempo real.")
